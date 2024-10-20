@@ -1,7 +1,7 @@
 import { createContext } from "react";
 import { IUserType } from "../types/userType";
 
-type ContextType = {
+export type ContextType = {
   user: IUserType;
   onboard: (name: string, email: string) => Promise<void>;
   update: (data: IUserType) => Promise<void>;

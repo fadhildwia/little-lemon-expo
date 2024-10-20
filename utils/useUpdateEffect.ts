@@ -1,6 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, EffectCallback, DependencyList } from "react";
 
-export default (effect, dependencies = []) => {
+const useUpdateEffect = (effect: EffectCallback, dependencies: DependencyList = []) => {
   const isInitialMount = useRef(true);
 
   useEffect(() => {
@@ -11,3 +11,5 @@ export default (effect, dependencies = []) => {
     }
   }, dependencies);
 };
+
+export default useUpdateEffect;

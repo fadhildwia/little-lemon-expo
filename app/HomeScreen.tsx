@@ -8,6 +8,7 @@ import {
   TextInput,
   ScrollView,
   StyleSheet,
+  Pressable,
 } from "react-native";
 import debounce from "lodash.debounce";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
@@ -20,13 +21,18 @@ import {
   filterByQueryAndCategories,
 } from "../database";
 import { IMenuType } from "@/types/menuType";
+import Avatar from "@/components/Avatar";
+import DefaultHeader from "@/components/DefaultHeader";
+import { useAuthContext } from "@/contexts/useAuthContext";
 
 const API_URL =
   "https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/main/capstone.json";
 
 const TOGGLE_OPTIONS = ["starters", "mains", "desserts", "drinks"];
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }: any) {
+  const { user } = useAuthContext();
+
   const [data, setData] = useState<Array<IMenuType>>([]);
   const [search, onChangeSearch] = useState<string>('');
   const [query, setQuery] = useState<string>('');
@@ -66,16 +72,17 @@ export default function HomeScreen() {
   }, []);
 
   useUpdateEffect(() => {
-    (async () => {
+    const fetchData = async () => {
       try {
         const menuItems: Array<IMenuType> = await filterByQueryAndCategories(query, filters);
-
         setData(menuItems);
       } catch (error: any) {
         Alert.alert(error.message);
         console.log(error.message);
       }
-    })();
+    };
+  
+    fetchData();
   }, [filters, query]);
 
   const lookup = useCallback((q: string) => {
@@ -157,6 +164,14 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
+      <DefaultHeader
+        rightActions={
+          <Pressable onPress={() => navigation.navigate("Profile")}>
+            <Avatar src={user?.avatar} alt={user?.fullName} size={42} />
+          </Pressable>
+        }
+      />
+
       <View style={styles.hero}>
         <Text style={styles.heroTitle}>Little Lemon</Text>
         <Text style={styles.heroSubtitle}>Chicago</Text>

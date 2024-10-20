@@ -1,5 +1,5 @@
 import { NavigationContainer } from '@react-navigation/native';
-import * as DefaultSplash from "expo-splash-screen";
+import * as SplashScreen from "expo-splash-screen";
 import 'react-native-reanimated';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -10,10 +10,9 @@ import { AuthContext } from '@/contexts/AuthContext';
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { IUserType } from '@/types/userType';
 import { useFonts } from 'expo-font';
-import SplashScreen from "./SplashScreen";
 import OnboardingScreen from './Onboarding';
+import ProfileScreen from './ProfileScreen';
 
-DefaultSplash.preventAutoHideAsync();
 const Stack = createNativeStackNavigator();
 
 const initialState = {
@@ -61,7 +60,7 @@ const [state, dispatch] = useReducer((prevState: any, action: { type: string; is
     checkOnboardingStatus();
   }, []);
 
-  const authContextValue = useMemo(
+  const authContextValue: any = useMemo(
     () => ({
       user: user,
       onboard: async (name: string, email: string) => {
@@ -122,17 +121,13 @@ const [state, dispatch] = useReducer((prevState: any, action: { type: string; is
   }, [error]);
 
   useEffect(() => {
-    if (loaded) {
-      DefaultSplash.hideAsync();
+    if (loaded && !state.isLoading) {
+      SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [loaded, state]);
 
   if (!loaded) {
     return null;
-  }
-
-  if (state.isLoading) {
-    return <SplashScreen />;
   }
 
   return (
@@ -145,6 +140,11 @@ const [state, dispatch] = useReducer((prevState: any, action: { type: string; is
                 <Stack.Screen
                   name="Home"
                   component={HomeScreen}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="Profile"
+                  component={ProfileScreen}
                   options={{ headerShown: false }}
                 />
               </>
